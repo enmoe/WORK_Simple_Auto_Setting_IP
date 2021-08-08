@@ -1,1 +1,3 @@
 # Work_Simple_Auto_Setting_IP
+
+这是广东移动项目中的在使用PXE自动装机后完成自动自动配置IP的脚本
