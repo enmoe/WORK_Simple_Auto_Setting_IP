@@ -6,7 +6,7 @@ def SET_BOND_IP_ADDR(BOND_NAME,
                     IPv4_ADDR, IPv4_GATEWAY,
                     IPv6_ADDR, IPv6_GATEWAY
     ): # 使用网卡模版配置BOND的IP地址
-    IP_INFO = BOND_NAME + " " + IPv4_ADDR + " " + IPv4_GATEWAY + " " + IPv6_ADDR + " " + IPv6_GATEWAY
+    IP_INFO = BOND_NAME + " " + IPv4_ADDR + " " + IPv4_GATEWAY + " " + IPv6_ADDR + " " + IPv6_GATEWAY  # 现在还没生成网卡的配置文件，所以先输出看看
     print(IP_INFO)
 
 def IF_BOND(
@@ -43,7 +43,7 @@ def SET_HOST_NAME(HOST_NAME): # 配置主机名
 
 
 def GET_SERVER_INFO(): # 获取服务器硬件SN、并解析bond信息 IP信息
-    TEST_SN = "TEST_CN" # 用于测试脚本是否可以运行SN
+    TEST_SN = "" # 用于测试脚本是否可以运行SN
     GET_SN =  TEST_SN   # 配置获取SN的方式是测试SN
     FILE = csv.reader(open(CSV_FILE_NAME,'r')) # 使用只读打开csv文件
     for i in FILE:
