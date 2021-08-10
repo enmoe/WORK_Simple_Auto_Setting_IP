@@ -6,8 +6,9 @@ def SET_BOND_IP_ADDR(BOND_NAME,
                     IPv4_ADDR, IPv4_GATEWAY,
                     IPv6_ADDR, IPv6_GATEWAY
     ): # 使用网卡模版配置BOND的IP地址
-    IP_INFO = BOND_NAME + " " + IPv4_ADDR + " " + IPv4_GATEWAY + " " + IPv6_ADDR + " " + IPv6_GATEWAY  # 现在还没生成网卡的配置文件，所以先输出看看
-    print(IP_INFO)
+    IP_INFO = BOND_NAME + " " + IPv4_ADDR + " " + IPv4_GATEWAY + " " + \
+        IPv6_ADDR + " " + IPv6_GATEWAY  
+    print(IP_INFO)  # 现在还没生成网卡的配置文件，所以先输出看看,是否能解析到IP地址和网关
 
 def IF_BOND(
             BOND_0_IPv4_ADDR, BOND_0_IPv4_GATEWAY,
@@ -16,7 +17,7 @@ def IF_BOND(
             BOND_1_IPv6_ADDR, BOND_1_IPv6_GATEWAY,
             BOND_2_IPv4_ADDR, BOND_2_IPv4_GATEWAY,
             BOND_2_IPv6_ADDR, BOND_2_IPv6_GATEWAY
-): # 判断BOND是否存在
+): # 判断BOND是否存在并配置IP地址
 
     if BOND_0_IPv4_ADDR!="NULL": # 判断是存在bond,如果存在开始配置bond
         SET_BOND_IP_ADDR("bond0",
