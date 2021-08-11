@@ -1,29 +1,33 @@
 import csv # 导入CSV模块
 import os # 导入os模块
 
-CSV_FILE_NAME="../info.csv" # 配置要打开的csv文件的路径
-TEST_SN = open("../testsn.txt", "r").read() # 用于测试脚本是否可以运行SN
+CSV_FILE_NAME="../info.csv" # 配置要打开的csv文件的位置
+TEST_SN = open("../testsn.txt", "r").read() # 用于测试脚本是否可以运行,选择在测试
+
+# IF_CFG_PATH = "/etc/sysconfig/network/"  正式环境用这个
+IF_CFG_PATH = "../test_file/"    # 生成bond配置文件的目录,测试输出文件的结果
 
 # 设置BOND的模式 BONDING_MODULE_OPTS
 BOND_0_MODE = "mode=802.3ad miimon=100"
 BOND_1_MODE = "mode=active-backup miimon=100"
 BOND_2_MODE = "" # 此子项目无bond2
 
+BOND_0_ETH = ["eth5", "eth7"]
+BOND_1_ETH = ["eth0", "eth1"]
+BOND_2_ETH = "" # 无bond2
 
-
-
-def SET_BOND_IP_ADDR(BOND_NAME, BOND_MODE,
+def SET_BOND_IP_ADDR(BOND_NAME, BOND_MODE, BOND_ETH, 
                     IPv4_ADDR, IPv4_GATEWAY,
                     IPv6_ADDR, IPv6_GATEWAY
     ): # 使用配置文件生成BOND的IP地址
 
-    # IF_CFG_PATH = "/etc/sysconfig/network/"
-    IF_CFG_PATH = "../test_file/"    # 生成bond配置文件的目录，不填写在当前生成
     BOND_IF_FILE = IF_CFG_PATH + "ifcfg-" + BOND_NAME   # 配置BOND网卡的配置文件的位置
     print(BOND_IF_FILE)
     BOND_CFG = \
         "BONDING_MASTER='yes'" + '\n' + \
         "BONDING_MODULE_OPTS='" + BOND_MODE + "'" + '\n' + \
+        "BONDING_SLAVE0='" + BOND_ETH[0] + "'" + '\n' + \
+        "BONDING_SLAVE1='" + BOND_ETH[1] + "'" + '\n' + \
         "BOOTPROTO='static'" + '\n' + \
         "BROADCAST=''" + '\n' + \
         "ETHTOOL_OPTIONS=''" + '\n' + \
@@ -37,11 +41,12 @@ def SET_BOND_IP_ADDR(BOND_NAME, BOND_MODE,
         "IPADDR_1='" + IPv6_ADDR + "'" + '\n' + \
         "LABEL_1='0'" + '\n'
     
-    BOND_FILE = open(BOND_IF_FILE, 'w+') # 打开BOND的配置文件
-    BOND_FILE.write(BOND_CFG)
+    
+    FILE = open(BOND_IF_FILE, 'w+') # 打开BOND的配置文件
+    FILE.write(BOND_CFG)
 
     BOND_IF_ROUTE_FILE = IF_CFG_PATH + "ifroute-" + BOND_NAME
-    BOND_ROUTE_FILE = open(BOND_IF_ROUTE_FILE, 'w+') # 打开bond的路由配置文件
+    FILE = open(BOND_IF_ROUTE_FILE, 'w+') # 打开bond的路由配置文件
 
     if BOND_NAME == "bond0":    # 如果bond0的话指添加默认路由
         BOND_ROUTE = \
@@ -51,9 +56,8 @@ def SET_BOND_IP_ADDR(BOND_NAME, BOND_MODE,
         BOND_ROUTE = \
             IPv4_ADDR + " " + IPv4_GATEWAY + " - " + BOND_NAME + '\n' + \
             IPv6_ADDR + " " + IPv6_GATEWAY + " - " + BOND_NAME + '\n' 
-
-    
-    BOND_ROUTE_FILE.write(BOND_ROUTE)
+   
+    FILE.write(BOND_ROUTE)
 
 def IF_BOND(
             BOND_0_IPv4_ADDR, BOND_0_IPv4_GATEWAY,
@@ -65,19 +69,19 @@ def IF_BOND(
             ): # 判断BOND是否存在并配置IP地址
 
     if BOND_0_IPv4_ADDR!="NULL": # 判断是存在bond,如果存在开始配置bond
-        SET_BOND_IP_ADDR("bond0", BOND_0_MODE,
+        SET_BOND_IP_ADDR("bond0", BOND_0_MODE, BOND_0_ETH,
                         BOND_0_IPv4_ADDR, BOND_0_IPv4_GATEWAY, 
                         BOND_0_IPv6_ADDR, BOND_0_IPv6_GATEWAY
                         )
 
     if BOND_1_IPv4_ADDR!="NULL": # 判断是存在bond,如果存在开始配置bond
-        SET_BOND_IP_ADDR("bond1", BOND_1_MODE,
+        SET_BOND_IP_ADDR("bond1", BOND_1_MODE, BOND_1_ETH,
                         BOND_1_IPv4_ADDR, BOND_1_IPv4_GATEWAY, 
                         BOND_1_IPv6_ADDR, BOND_1_IPv6_GATEWAY
                         )
 
     if BOND_2_IPv4_ADDR!="NULL": # 判断是存在bond,如果存在开始配置bond
-        SET_BOND_IP_ADDR("bond2", BOND_2_MODE,
+        SET_BOND_IP_ADDR("bond2", BOND_2_MODE, BOND_2_ETH,
                         BOND_2_IPv4_ADDR, BOND_2_IPv4_GATEWAY, 
                         BOND_2_IPv6_ADDR, BOND_2_IPv6_GATEWAY
                         )
@@ -119,8 +123,31 @@ def GET_SERVER_INFO(): # 获取服务器硬件SN、并解析bond信息 IP信息
                     BOND_2_IPv6_ADDR, BOND_2_IPv6_GATEWAY
                     )   # 传入所有ip的信息，判断是否存在bond
 
-def ADD_NET_CARD_CONF():
-    print
+def SET_NET_CARD_CONF(NET_CARD_NAME, NET_CARD_MODEL):
+    NET_CARD_FILE = IF_CFG_PATH + "ifcfg-" + NET_CARD_NAME
+    FILE=open(NET_CARD_FILE, "w+")
+    NET_CARD = \
+        "BOOTPROTO='none'" + '\n' + \
+        "BROADCAST=''" + '\n' + \
+        "ETHTOOL_OPTIONS=''" + '\n' + \
+        "IPADDR=''" + '\n' + \
+        "MTU=''" + '\n' + \
+        "NAME='" + NET_CARD_MODEL + "'" + '\n' + \
+        "NETMASK=''" + '\n' + \
+        "NETWORK=''" + '\n' + \
+        "REMOTE_IPADDR=''" + '\n' + \
+        "STARTMODE='hotplug'" + '\n' 
+
+    FILE.write(NET_CARD)
+
+    # print(NET_CARD)
+
+
+def ADD_NET_CADR_CONF():    # 添加网卡配置文件
+    SET_NET_CARD_CONF(BOND_1_ETH[0], "HNS GE/10GE/25GE RDMA Network Controller")
+    SET_NET_CARD_CONF(BOND_1_ETH[1], "HNS GE/10GE/25GE Network Controller")
+    SET_NET_CARD_CONF(BOND_0_ETH[0], "Hi1822 Family (2*25GE)")
+    SET_NET_CARD_CONF(BOND_0_ETH[1], "Hi1822 Family (2*25GE)")
 
 
 def DEL_DEFAULT_NET_CARD_CONF():    # 删除默认的网卡、路由配置文件
@@ -130,3 +157,4 @@ def DEL_DEFAULT_NET_CARD_CONF():    # 删除默认的网卡、路由配置文件
     
 # DEL_DEFAULT_NET_CARD_CONF() 
 GET_SERVER_INFO()
+ADD_NET_CADR_CONF()
