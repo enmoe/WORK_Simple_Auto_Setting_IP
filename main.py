@@ -6,7 +6,7 @@ TEST_SN = "2102313CQDP0L6000210" # 用于测试脚本是否可以运行SN
 
 # 设置BOND的模式 BONDING_MODULE_OPTS
 BOND_0_MODE = "mode=802.3ad miimon=100"
-BOND_1_MODE = "mode=1 miimon=100"
+BOND_1_MODE = "mode=active-backup miimon=100"
 BOND_2_MODE = "" # 此子项目无bond2
 def SET_BOND_IP_ADDR(BOND_NAME, BOND_MODE,
                     IPv4_ADDR, IPv4_GATEWAY,
