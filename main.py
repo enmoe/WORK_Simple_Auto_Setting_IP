@@ -2,21 +2,21 @@ import csv # 导入CSV模块
 import os # 导入os模块
 
 CSV_FILE_NAME="../info.csv" # 配置要打开的csv文件的路径
-TEST_SN = "" # 用于测试脚本是否可以运行SN
+TEST_SN = "2102313CQDP0L6000210" # 用于测试脚本是否可以运行SN
 
 # 设置BOND的模式 BONDING_MODULE_OPTS
 BOND_0_MODE = "mode=802.3ad miimon=100"
 BOND_1_MODE = "mode=1 miimon=100"
-BOND_2_MODE = BOND_1_MODE # BOND1 与 BOND2 都是光口 所以mode一样
+BOND_2_MODE = "" # 此子项目无bond2
 def SET_BOND_IP_ADDR(BOND_NAME, BOND_MODE,
                     IPv4_ADDR, IPv4_GATEWAY,
                     IPv6_ADDR, IPv6_GATEWAY
     ): # 使用配置文件生成BOND的IP地址
 
     # IF_CFG_PATH = "/etc/sysconfig/network/"
-    IF_CFG_PATH = ""    # 生成bond配置文件的目录，不填写在当前生成
+    IF_CFG_PATH = "../test_file/"    # 生成bond配置文件的目录，不填写在当前生成
     BOND_IF_FILE = IF_CFG_PATH + "ifcfg-" + BOND_NAME   # 配置BOND网卡的配置文件的位置
-    
+    print(BOND_IF_FILE)
     BOND_CFG = \
         "BONDING_MASTER='yes'" + '\n' + \
         "BONDING_MODULE_OPTS='" + BOND_MODE + "'" + '\n' + \
