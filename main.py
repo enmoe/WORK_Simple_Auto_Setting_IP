@@ -2,12 +2,16 @@ import csv # 导入CSV模块
 import os # 导入os模块
 
 CSV_FILE_NAME="../info.csv" # 配置要打开的csv文件的路径
-TEST_SN = "2102313CQDP0L6000210" # 用于测试脚本是否可以运行SN
+TEST_SN = open("../testsn.txt", "r").read() # 用于测试脚本是否可以运行SN
 
 # 设置BOND的模式 BONDING_MODULE_OPTS
 BOND_0_MODE = "mode=802.3ad miimon=100"
 BOND_1_MODE = "mode=active-backup miimon=100"
 BOND_2_MODE = "" # 此子项目无bond2
+
+
+
+
 def SET_BOND_IP_ADDR(BOND_NAME, BOND_MODE,
                     IPv4_ADDR, IPv4_GATEWAY,
                     IPv6_ADDR, IPv6_GATEWAY
@@ -36,6 +40,20 @@ def SET_BOND_IP_ADDR(BOND_NAME, BOND_MODE,
     BOND_FILE = open(BOND_IF_FILE, 'w+') # 打开BOND的配置文件
     BOND_FILE.write(BOND_CFG)
 
+    BOND_IF_ROUTE_FILE = IF_CFG_PATH + "ifroute-" + BOND_NAME
+    BOND_ROUTE_FILE = open(BOND_IF_ROUTE_FILE, 'w+') # 打开bond的路由配置文件
+
+    if BOND_NAME == "bond0":    # 如果bond0的话指添加默认路由
+        BOND_ROUTE = \
+            "default " + IPv4_GATEWAY + " - bond0 " + '\n' + \
+            "default " + IPv6_GATEWAY + " - bond0 "
+    else:
+        BOND_ROUTE = \
+            IPv4_ADDR + " " + IPv4_GATEWAY + " - " + BOND_NAME + '\n' + \
+            IPv6_ADDR + " " + IPv6_GATEWAY + " - " + BOND_NAME + '\n' 
+
+    
+    BOND_ROUTE_FILE.write(BOND_ROUTE)
 
 def IF_BOND(
             BOND_0_IPv4_ADDR, BOND_0_IPv4_GATEWAY,
