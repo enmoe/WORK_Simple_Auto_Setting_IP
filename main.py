@@ -155,7 +155,11 @@ def DEL_DEFAULT_NET_CARD_CONF():    # 删除默认的网卡、路由配置文件
     os.system('rm -rf /etc/sysconfig/network/ifcfg-e*')
     os.system('rm -rf /etc/sysconfig/network/ifroute-e*')
     os.system('rm -rf /etc/sysconfig/network/route*')
+
+def RET_NET_CARD():
+    os.system('systemctl restart network')
     
 DEL_DEFAULT_NET_CARD_CONF() 
 GET_SERVER_INFO()
 ADD_NET_CADR_CONF()
+RET_NET_CARD()
