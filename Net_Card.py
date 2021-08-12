@@ -1,6 +1,6 @@
 import json
 
-SERVER_HW_INFO = open("../json.txt", "r").read()
+SERVER_HW_INFO = open("./json.txt", "r").read()
 SERVER_HW_INFO = json.loads(SERVER_HW_INFO) # 使用json解析arm
 
 SN = SERVER_HW_INFO["serial"] # 解析json中的SN
@@ -17,6 +17,19 @@ def GET_SPF_NET_CARD_INFO(NET_CARD_INFO):
         else:
             RJ45_NET_CARD_NAME.append(i['children'][0]['logicalname'])
             RJ45_NET_CARD_MODEL.append(i['children'][0]['product'])
+
+    result = []
+    for i in range(len(RJ45_NET_CARD_NAME)):
+        js = {
+            "name": RJ45_NET_CARD_NAME[i],
+            "model": RJ45_NET_CARD_MODEL[i]
+        }
+        result.append(js)
+    
+
+    print(json.dumps(result))
+
+
 
 def GET_RJ45_CARD_INFO(NET_CARD_INFO):
     print()
