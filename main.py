@@ -85,7 +85,7 @@ def IF_BOND(
                         bond_2_ipv6_addr, bond_2_ipv6_gateway
                         )
   
-def SET_host_name(host_name): # 配置主机名
+def SET_HOST_NAME(host_name): # 配置主机名
     comm = "hostnamectl" + " " + "set-hostname" + " " + \
         host_name  # 使用hostnamectl 配置主机名
     print(comm)
@@ -116,7 +116,7 @@ def GET_SERVER_INFO(): # 获取服务器硬件SN、并解析bond信息 IP信息
             bond_2_ipv6_addr=i[13]
             bond_2_ipv6_gateway=i[14]
 
-            SET_host_name(host_name) # 如果一致开始配置主机名
+            SET_HOST_NAME(host_name) # 如果一致开始配置主机名
 
             IF_BOND(
                     bond_0_ipv4_addr, bond_0_ipv4_gateway,
@@ -128,7 +128,7 @@ def GET_SERVER_INFO(): # 获取服务器硬件SN、并解析bond信息 IP信息
                     )   # 传入所有ip的信息，判断是否存在bond
             break   #如果查询到了就跳出循环
 
-def GEN_net_card_CONF(net_card_name, net_card_model):   # 
+def GEN_NET_CARD_CONF(net_card_name, net_card_model):   # 
     net_card_file = net_card_cfg_path + "ifcfg-" + net_card_name
     file=open(net_card_file, "w+")
     net_card = \
@@ -146,10 +146,10 @@ def GEN_net_card_CONF(net_card_name, net_card_model):   #
     file.write(net_card)    # 写入网卡配置文件
 
 def ADD_NET_CADR_CONF():    # 添加网卡配置文件
-    GEN_net_card_CONF(bond_1_eth_list[0], "HNS GE/10GE/25GE RDMA Network Controller")
-    GEN_net_card_CONF(bond_1_eth_list[1], "HNS GE/10GE/25GE Network Controller")
-    GEN_net_card_CONF(bond_0_eth_list[0], "Hi1822 Family (2*25GE)")
-    GEN_net_card_CONF(bond_0_eth_list[1], "Hi1822 Family (2*25GE)")
+    GEN_NET_CARD_CONF(bond_1_eth_list[0], "HNS GE/10GE/25GE RDMA Network Controller")
+    GEN_NET_CARD_CONF(bond_1_eth_list[1], "HNS GE/10GE/25GE Network Controller")
+    GEN_NET_CARD_CONF(bond_0_eth_list[0], "Hi1822 Family (2*25GE)")
+    GEN_NET_CARD_CONF(bond_0_eth_list[1], "Hi1822 Family (2*25GE)")
 
 def DEL_DEFAULT_NET_CARD_CONF():    # 删除默认的网卡、路由配置文件
     os.system('rm -rf /etc/sysconfig/network/ifcfg-e*')
