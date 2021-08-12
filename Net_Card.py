@@ -1,40 +1,42 @@
 import json
 
-SERVER_HW_INFO = open("./json.txt", "r").read()
-SERVER_HW_INFO = json.loads(SERVER_HW_INFO) # 使用json解析arm
+hw_info= open("./json.txt", "r").read()  # 使
+hw_info = json.loads(hw_info) # 使用json解析arm
 
-SN = SERVER_HW_INFO["serial"] # 解析json中的SN
+sn = hw_info["serial"] # 解析json中的SN
 
-RJ45_NET_CARD_NAME = []
-RJ45_NET_CARD_MODEL = []
 
-def GET_SPF_NET_CARD_INFO(NET_CARD_INFO):
 
-    for i in NET_CARD_INFO['children'][0]['children']:
+def GET_SPF_NET_CARD_INFO(net_card_info):
+    
+    rj45_net_card_name = []   # 创建RJ45对
+    rj45_net_card_model = []
+
+    for i in net_card_info['children'][0]['children']:
         if len(i['children'][0]['logicalname']) == 2:   # 说明现在是插入网线了
-            RJ45_NET_CARD_NAME.append(i['children'][0]['logicalname'][0])
-            RJ45_NET_CARD_MODEL.append(i['children'][0]['product'])
+            rj45_net_card_name.append(i['children'][0]['logicalname'][0])
+            rj45_net_card_model.append(i['children'][0]['product'])
         else:
-            RJ45_NET_CARD_NAME.append(i['children'][0]['logicalname'])
-            RJ45_NET_CARD_MODEL.append(i['children'][0]['product'])
+            rj45_net_card_name.append(i['children'][0]['logicalname'])
+            rj45_net_card_model.append(i['children'][0]['product'])
 
     result = []
-    for i in range(len(RJ45_NET_CARD_NAME)):
+    for i in range(len(rj45_net_card_name)):
         js = {
-            "name": RJ45_NET_CARD_NAME[i],
-            "model": RJ45_NET_CARD_MODEL[i]
+            "name": rj45_net_card_name[i],
+            "model": rj45_net_card_model[i]
         }
         result.append(js)
     
 
-    print(json.dumps(result))
+    print(result)
 
 
 
-def GET_RJ45_CARD_INFO(NET_CARD_INFO):
+def GET_RJ45_CARD_INFO(net_card_info):
     print()
 
-for i in SERVER_HW_INFO['children'][0]['children']:
+for i in hw_info['children'][0]['children']:
     # print(json.dumps(i))
     if "Ethernet interface" in json.dumps(i): # 获取电口的数据
        
