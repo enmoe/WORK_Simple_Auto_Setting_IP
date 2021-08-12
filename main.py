@@ -3,8 +3,8 @@ import os # 导入os模块
 
 CSV_FILE_NAME="../info.csv" # 配置要打开的csv文件的位置
 
-# IF_CFG_PATH = "/etc/sysconfig/network/"  生成bond配置文件的目录,用于正式环境用
-IF_CFG_PATH = "../test_file/"    # 生成bond配置文件的目录,用于测试输出文件的结果
+IF_CFG_PATH = "/etc/sysconfig/network/"  # 生成bond配置文件的目录,用于正式环境用
+# IF_CFG_PATH = "../test_file/"    # 生成bond配置文件的目录,用于测试输出文件的结果
 
 # 设置BOND的模式 BONDING_MODULE_OPTS
 BOND_0_MODE = "mode=802.3ad miimon=100"
@@ -90,10 +90,13 @@ def SET_HOST_NAME(HOST_NAME): # 配置主机名
         HOST_NAME  # 使用hostnamectl 配置主机名
     print(comm)
     # os.system(comm)
+    
 
 def GET_SERVER_INFO(): # 获取服务器硬件SN、并解析bond信息 IP信息
-    # SN =  ""   # 配置获取SN的命令
-    SN = open("../testsn.txt", "r").read() # 用于测试脚本是否可以运行,配置测试的SN，测试是否呢个能生成bond、网卡的配置文件
+
+    RET = os.popen("lshw -json").read() # 获取服务器硬件信息
+    SN = RET["serial"] # 解析json中的SN
+    # SN = open("../testsn.txt", "r").read() # 用于测试脚本是否可以运行,配置测试的SN，测试是否呢个能生成bond、网卡的配置文件
 
     FILE = csv.reader(open(CSV_FILE_NAME,'r')) # 使用只读打开csv文件
     for i in FILE:
@@ -153,6 +156,6 @@ def DEL_DEFAULT_NET_CARD_CONF():    # 删除默认的网卡、路由配置文件
     os.system('rm -rf /etc/sysconfig/network/ifroute-e*')
     os.system('rm -rf /etc/sysconfig/network/route*')
     
-# DEL_DEFAULT_NET_CARD_CONF() 
+DEL_DEFAULT_NET_CARD_CONF() 
 GET_SERVER_INFO()
 ADD_NET_CADR_CONF()
