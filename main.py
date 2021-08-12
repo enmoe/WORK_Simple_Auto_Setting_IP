@@ -92,7 +92,7 @@ def SET_HOST_NAME(HOST_NAME): # 配置主机名
     # os.system(comm)
 
 def GET_SERVER_INFO(): # 获取服务器硬件SN、并解析bond信息 IP信息
-    # SN =  ""   # 配置获取SN的方式是测试SN
+    # SN =  ""   # 配置获取SN的命令
     SN = open("../testsn.txt", "r").read() # 用于测试脚本是否可以运行,配置测试的SN，测试是否呢个能生成bond、网卡的配置文件
 
     FILE = csv.reader(open(CSV_FILE_NAME,'r')) # 使用只读打开csv文件
