@@ -2,7 +2,6 @@ import csv # 导入CSV模块
 import os # 导入os模块
 
 CSV_FILE_NAME="../info.csv" # 配置要打开的csv文件的位置
-TEST_SN = open("../testsn.txt", "r").read() # 用于测试脚本是否可以运行,配置测试的SN，测试是否呢个能生成bond、网卡的配置文件
 
 # IF_CFG_PATH = "/etc/sysconfig/network/"  生成bond配置文件的目录,用于正式环境用
 IF_CFG_PATH = "../test_file/"    # 生成bond配置文件的目录,用于测试输出文件的结果
@@ -45,14 +44,14 @@ def GEN_BOND_CONF(BOND_NAME, BOND_MODE, BOND_ETH,
     FILE = open(BOND_IF_FILE, 'w+') # 打开BOND的配置文件
     FILE.write(BOND_CFG) # 写入BOND配置文件
 
-    BOND_IF_ROUTE_FILE = IF_CFG_PATH + "ifroute-" + BOND_NAME   # 配置BOND的路由
+    BOND_IF_ROUTE_FILE = IF_CFG_PATH + "ifroute-" + BOND_NAME   # 配置BOND的路由的文件
     FILE = open(BOND_IF_ROUTE_FILE, 'w+') # 打开bond的路由配置文件
 
     if BOND_NAME == "bond0":    # 如果bond0的话指添加默认路由
         BOND_ROUTE = \
             "default " + IPv4_GATEWAY + " - bond0 " + '\n' + \
             "default " + IPv6_GATEWAY + " - bond0 "
-    else:
+    else:   # 如果是其他的网口就指定一条普通的路由
         BOND_ROUTE = \
             IPv4_ADDR + " " + IPv4_GATEWAY + " - " + BOND_NAME + '\n' + \
             IPv6_ADDR + " " + IPv6_GATEWAY + " - " + BOND_NAME + '\n' 
@@ -93,11 +92,13 @@ def SET_HOST_NAME(HOST_NAME): # 配置主机名
     # os.system(comm)
 
 def GET_SERVER_INFO(): # 获取服务器硬件SN、并解析bond信息 IP信息
-    GET_SN =  TEST_SN   # 配置获取SN的方式是测试SN
+    # SN =  ""   # 配置获取SN的方式是测试SN
+    SN = open("../testsn.txt", "r").read() # 用于测试脚本是否可以运行,配置测试的SN，测试是否呢个能生成bond、网卡的配置文件
+
     FILE = csv.reader(open(CSV_FILE_NAME,'r')) # 使用只读打开csv文件
     for i in FILE:
-        SN = i[1] # 解析CSV中的SN
-        if SN == GET_SN: # 判断服务器的SN与现场的是否一致
+        CSV_SN = i[1] # 解析CSV中的SN
+        if CSV_SN == SN: # 判断服务器的SN与现场的是否一致，如果一致的话就开始解析CSV中的信息
             HOST_NAME=i[2]
             BOND_0_IPv4_ADDR=i[3]
             BOND_0_IPv4_GATEWAY=i[4]
@@ -141,15 +142,11 @@ def GEN_NET_CARD_CONF(NET_CARD_NAME, NET_CARD_MODEL):   #
 
     FILE.write(NET_CARD)    # 写入网卡配置文件
 
-    # print(NET_CARD)
-
-
 def ADD_NET_CADR_CONF():    # 添加网卡配置文件
     GEN_NET_CARD_CONF(BOND_1_ETH[0], "HNS GE/10GE/25GE RDMA Network Controller")
     GEN_NET_CARD_CONF(BOND_1_ETH[1], "HNS GE/10GE/25GE Network Controller")
     GEN_NET_CARD_CONF(BOND_0_ETH[0], "Hi1822 Family (2*25GE)")
     GEN_NET_CARD_CONF(BOND_0_ETH[1], "Hi1822 Family (2*25GE)")
-
 
 def DEL_DEFAULT_NET_CARD_CONF():    # 删除默认的网卡、路由配置文件
     os.system('rm -rf /etc/sysconfig/network/ifcfg-e*')
