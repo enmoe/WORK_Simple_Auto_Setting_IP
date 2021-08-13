@@ -88,8 +88,8 @@ def IF_BOND(
 def SET_HOST_NAME(host_name): # 配置主机名
     comm = "hostnamectl" + " " + "set-hostname" + " " + \
         host_name  # 使用hostnamectl 配置主机名
-    print(comm)
-    # os.system(comm)
+    # print(comm)
+    os.system(comm)
     
 
 def GET_SERVER_INFO(): # 获取服务器硬件SN、并解析bond信息 IP信息
