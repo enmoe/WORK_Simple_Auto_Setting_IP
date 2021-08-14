@@ -6,7 +6,7 @@ csv_file_name="../test_files/csv_file/info.csv" # 配置要打开的csv文件的
 test_mode="no" # 用于配置是否是测试模式
 
 if test_mode == "yes":  # 配置是不是测试模式
-    net_card_cfg_path = "../test_files/net_card_cfg"    # 生成bond配置文件的目录,用于测试输出文件的结果
+    net_card_cfg_path = "../test_files/net_card_cfg/"    # 生成bond配置文件的目录,用于测试输出文件的结果
     # hw_info = open("../test_files/json_file/json.txt", "r").read()  # 打开json的测试文件
     # hw_info = json.loads(hw_info)  # 使用json解析服务器的硬件
     # sn = hw_info["serial"]
