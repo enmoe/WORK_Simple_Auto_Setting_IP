@@ -1,10 +1,26 @@
 import csv # 导入CSV模块
 import os # 导入os模块
+import json # 导入json模块
 
-csv_file_name="../info.csv" # 配置要打开的csv文件的位置
+csv_file_name="../test_files/csv_file/info.csv" # 配置要打开的csv文件的位置
+test_mode="no" # 用于配置是否是测试模式
 
-net_card_cfg_path = "/etc/sysconfig/network/"  # 生成bond配置文件的目录,用于正式环境用
-# net_card_cfg_path = "../test_file/"    # 生成bond配置文件的目录,用于测试输出文件的结果
+if test_mode == "yes":  # 配置是不是测试模式
+    net_card_cfg_path = "../test_files/net_card_cfg"    # 生成bond配置文件的目录,用于测试输出文件的结果
+    # hw_info = open("../test_files/json_file/json.txt", "r").read()  # 打开json的测试文件
+    # hw_info = json.loads(hw_info)  # 使用json解析服务器的硬件
+    # sn = hw_info["serial"]
+
+    sn = open("../test_files/testsh.txt", "r").read()
+    # print(sn)
+
+else:
+    net_card_cfg_path = "/etc/sysconfig/network/"  # 生成bond配置文件的目录,用于正式环境用
+    hw_info = os.popen("lshw -json").read()  # 获取服务器硬件信息
+    hw_info = json.loads(hw_info) # 解析服务器的硬件信息
+
+    sn = hw_info["serial"]
+
 
 # 设置BOND的模式 BONDING_MODULE_OPTS
 bond_0_mode = "mode=802.3ad miimon=100"
@@ -94,14 +110,12 @@ def SET_HOST_NAME(host_name): # 配置主机名
 
 def GET_SERVER_INFO(): # 获取服务器硬件SN、并解析bond信息 IP信息
 
-    RET = os.popen("lshw -json").read() # 获取服务器硬件信息
-    SN = RET["serial"] # 解析json中的SN
-    # SN = open("../testsn.txt", "r").read() # 用于测试脚本是否可以运行,配置测试的SN，测试是否呢个能生成bond、网卡的配置文件
+    # SN = hw_info["serial"] # 解析json中的SN
 
     file = csv.reader(open(csv_file_name,'r')) # 使用只读打开csv文件
     for i in file:
         csv_file = i[1] # 解析CSV中的SN
-        if csv_file == SN: # 判断服务器的SN与现场的是否一致，如果一致的话就开始解析CSV中的信息
+        if csv_file == sn: # 判断服务器的SN与现场的是否一致，如果一致的话就开始解析CSV中的信息
             host_name=i[2]
             bond_0_ipv4_addr=i[3]
             bond_0_ipv4_gateway=i[4]
